@@ -1,0 +1,22 @@
+[
+{
+"id": 1,
+"title": "Tour a Guatapé",
+"description": "Viaje todo incluido con transporte, comida y guía.",
+"price": 150000,
+"location": "Antioquia",
+"duration": "1 día",
+"available": true,
+"image": "guatape.jpg"
+},
+{
+"id": 2,
+"title": "Tour al Amazonas",
+"description": "Experiencia de 3 días en la selva amazónica.",
+"price": 800000,
+"location": "Amazonas",
+"duration": "3 días",
+"available": true,
+"image": "amazonas.jpg"
+}
+]

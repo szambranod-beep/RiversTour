@@ -1,61 +1,44 @@
-const { HttpError } = require("../utils/httpError");
-const { OrderRepository } = require("../repositories/order.repository");
-const { CartRepository } = require("../repositories/cart.repository");
-const { ProductRepository } = require("../repositories/product.repository");
+const orderRepository = require("../repositories/orders.repository");
+const tourRepository = require("../repositories/tours.repository");
 
-class OrderService {
-  constructor() {
-    this.orderRepo = new OrderRepository();
-    this.cartRepo = new CartRepository();
-    this.productRepo = new ProductRepository();
-  }
-
-  async pay(userId) {
-    const cart = await this.cartRepo.findByUserId(userId);
-
-    if (!cart.items || cart.items.length === 0) {
-      throw new HttpError(409, "CONFLICT", "El carrito está vacío");
-    }
-
-    let total = 0;
-
-    for (const item of cart.items) {
-      const product = await this.productRepo.findById(item.productId);
-
-      if (!product || product.active !== true) {
-        throw new HttpError(404, "NOT_FOUND", `Producto no existe: ${item.productId}`);
-      }
-
-      if (product.stock < item.quantity) {
-        throw new HttpError(409, "CONFLICT", `Stock insuficiente para ${product.name}`);
-      }
-
-      total += item.price * item.quantity;
-
-      await this.productRepo.update(product.id, {
-        stock: product.stock - item.quantity
-      });
-    }
-
-    const order = await this.orderRepo.create({
-      userId,
-      items: cart.items,
-      total,
-      status: "paid"
-    });
-
-    cart.items = [];
-    await this.cartRepo.save(cart);
-
-    return {
-      message: "Pago realizado correctamente",
-      order
-    };
-  }
-
-  async listByUser(userId) {
-    return await this.orderRepo.findByUserId(userId);
-  }
+const createOrder = async (userId, tourIds) => {
+if (!tourIds || tourIds.length === 0) {
+throw new Error("Debe seleccionar al menos un tour");
 }
 
-module.exports = { OrderService };
+const tours = await tourRepository.getAll();
+
+const selectedTours = tours.filter((t) =>
+tourIds.includes(t.id)
+);
+
+if (selectedTours.length === 0) {
+throw new Error("Tours inválidos");
+}
+
+const total = selectedTours.reduce(
+(sum, t) => sum + t.price,
+0
+);
+
+const order = {
+id: Date.now(),
+userId,
+tours: tourIds,
+total,
+status: "confirmed",
+date: new Date()
+};
+
+return await orderRepository.save(order);
+};
+
+const getMyOrders = async (userId) => {
+return await orderRepository.getByUserId(userId);
+};
+
+module.exports = {
+createOrder,
+getMyOrders
+};
+

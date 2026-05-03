@@ -1,38 +1,20 @@
+const API_KEY = "riverstour-123";
 
-const { HttpError } = require("../utils/httpError");
-const { SessionRepository } = require("../repositories/session.repository");
-const { UserRepository } = require("../repositories/user.repository");
+module.exports = (req, res, next) => {
+const apiKey = req.headers["x-api-key"];
 
-const sessionRepo = new SessionRepository();
-const userRepo = new UserRepository();
-
-async function requireApiKey(req, res, next) {
-  try {
-    const apiKey = req.headers["x-api-key"];
-
-    if (!apiKey) {
-      throw new HttpError(401, "UNAUTHORIZED", "Falta el header x-api-key");
-    }
-
-    const session = await sessionRepo.findByApiKey(apiKey);
-
-    if (!session) {
-      throw new HttpError(401, "UNAUTHORIZED", "ApiKey inválida o sesión inactiva");
-    }
-
-    const user = await userRepo.findById(session.userId);
-
-    if (!user || user.active !== true) {
-      throw new HttpError(401, "UNAUTHORIZED", "Usuario no válido o inactivo");
-    }
-
-    req.session = session;
-    req.user = user;
-
-    next();
-  } catch (error) {
-    next(error);
-  }
+if (!apiKey) {
+return res.status(401).json({
+message: "API Key requerida"
+});
 }
 
-module.exports = { requireApiKey };
+if (apiKey !== API_KEY) {
+return res.status(403).json({
+message: "API Key inválida"
+});
+}
+
+next();
+};
+

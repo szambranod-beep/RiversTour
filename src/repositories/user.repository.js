@@ -1,39 +1,24 @@
-const path = require("path");
-const crypto = require("crypto");
-const { readJson, writeJson } = require("../utils/fileDb");
+const { readFile } = require("../utils/fileDb");
 
-class UserRepository {
-  constructor() {
-    this.filePath = path.join(__dirname, "../../data/users.json");
-  }
+const FILE_NAME = "users.json";
 
-  async list() {
-    return await readJson(this.filePath);
-  }
+const getAll = async () => {
+return await readFile(FILE_NAME);
+};
 
-  async findById(id) {
-    const users = await this.list();
-    return users.find(user => user.id === id) || null;
-  }
+const getByEmail = async (email) => {
+const users = await getAll();
+return users.find((user) => user.email === email);
+};
 
-  async findByEmail(email) {
-    const users = await this.list();
-    return users.find(user => user.email === email) || null;
-  }
+const getById = async (id) => {
+const users = await getAll();
+return users.find((user) => user.id === id);
+};
 
-  async create(user) {
-    const users = await this.list();
+module.exports = {
+getAll,
+getByEmail,
+getById
+};
 
-    const newUser = {
-      id: crypto.randomUUID(),
-      ...user
-    };
-
-    users.push(newUser);
-    await writeJson(this.filePath, users);
-
-    return newUser;
-  }
-}
-
-module.exports = { UserRepository };

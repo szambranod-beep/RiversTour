@@ -1,15 +1,38 @@
-/**
- * Utilidad para leer y escribir archivos JSON.
- */
 const fs = require("fs").promises;
+const path = require("path");
 
-async function readJson(filePath) {
-  const content = await fs.readFile(filePath, "utf-8");
-  return JSON.parse(content || "[]");
+const dataPath = path.join(__dirname, "../../data");
+
+// 📖 Leer archivo
+const readFile = async (fileName) => {
+try {
+const file = await fs.readFile(
+path.join(dataPath, fileName),
+"utf-8"
+);
+
+```
+return JSON.parse(file);
+```
+
+} catch (error) {
+throw new Error("Error leyendo archivo: " + fileName);
 }
+};
 
-async function writeJson(filePath, data) {
-  await fs.writeFile(filePath, JSON.stringify(data, null, 2), "utf-8");
+// ✍️ Escribir archivo
+const writeFile = async (fileName, data) => {
+try {
+await fs.writeFile(
+path.join(dataPath, fileName),
+JSON.stringify(data, null, 2)
+);
+} catch (error) {
+throw new Error("Error escribiendo archivo: " + fileName);
 }
+};
 
-module.exports = { readJson, writeJson };
+module.exports = {
+readFile,
+writeFile
+};

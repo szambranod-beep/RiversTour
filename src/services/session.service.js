@@ -1,20 +1,25 @@
-const sessionRepository = require("../repositories/session.repository");
+let sessions = [];
 
-const getSession = async (token) => {
-const session = await sessionRepository.getByToken(token);
+const getAll = async () => {
+return sessions;
+};
 
-if (!session) {
-throw new Error("Sesión inválida");
-}
+const getByToken = async (token) => {
+return sessions.find(s => s.token === token);
+};
 
+const create = async (session) => {
+sessions.push(session);
 return session;
 };
 
-const logout = async (token) => {
-return await sessionRepository.deleteByToken(token);
+const remove = async (token) => {
+sessions = sessions.filter(s => s.token !== token);
 };
 
 module.exports = {
-getSession,
-logout
+getAll,
+getByToken,
+create,
+remove
 };

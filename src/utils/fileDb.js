@@ -1,19 +1,16 @@
 const fs = require("fs").promises;
 const path = require("path");
 
-// usar process.cwd() en vez de __dirname
-const dataPath = path.join(process.cwd(), "data");
+const dataPath = path.join(__dirname, "../../data");
 
 const readFile = async (fileName) => {
 try {
-const file = await fs.readFile(
-path.join(dataPath, fileName),
-"utf-8"
-);
+const fullPath = path.join(dataPath, fileName);
 
-```
+
+const file = await fs.readFile(fullPath, "utf-8"); // ✅ así se usa
 return JSON.parse(file);
-```
+
 
 } catch (error) {
 console.error(error);
@@ -23,10 +20,15 @@ throw new Error("Error leyendo archivo: " + fileName);
 
 const writeFile = async (fileName, data) => {
 try {
+const fullPath = path.join(dataPath, fileName);
+
+
 await fs.writeFile(
-path.join(dataPath, fileName),
-JSON.stringify(data, null, 2)
+  fullPath,
+  JSON.stringify(data, null, 2)
 );
+
+
 } catch (error) {
 console.error(error);
 throw new Error("Error escribiendo archivo: " + fileName);

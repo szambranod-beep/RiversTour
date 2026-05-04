@@ -1,28 +1,16 @@
-const sessionService = require("../services/session.service");
-
 module.exports = async (req, res, next) => {
-try {
-const token = req.headers["x-session-token"];
+  const token = req.headers["x-session-token"];
 
+  if (!token) {
+    return res.status(401).json({ message: "Token requerido" });
+  }
 
-if (!token) {
-  return res.status(401).json({
-    message: "No autenticado"
-  });
-}
+  const session = await sessionsService.getByToken(token);
 
-const session = await sessionService.getSession(token);
+  if (!session) {
+    return res.status(401).json({ message: "Sesión inválida" });
+  }
 
-// 🔥 aquí inyectas el usuario en la request
-req.user = {
-  userId: session.userId,
-  role: session.role
-};
-
-next();
-
-
-} catch (error) {
-next(error);
-}
+  req.user = session;
+  next();
 };

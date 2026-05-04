@@ -13,11 +13,11 @@ const getById = async (req, res, next) => {
 try {
 const id = Number(req.params.id);
 
-```
+
 const tour = await toursService.getById(id);
 
 res.json(tour);
-```
+
 
 } catch (error) {
 next(error);
@@ -28,9 +28,9 @@ const create = async (req, res, next) => {
 try {
 const newTour = await toursService.create(req.body);
 
-```
+
 res.status(201).json(newTour);
-```
+
 
 } catch (error) {
 next(error);

@@ -6,7 +6,7 @@ message: "No autenticado"
 });
 }
 
-```
+
 if (req.user.role !== role) {
   return res.status(403).json({
     message: "Acceso denegado"
@@ -14,7 +14,7 @@ if (req.user.role !== role) {
 }
 
 next();
-```
+
 
 };
 };

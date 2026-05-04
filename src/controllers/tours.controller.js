@@ -41,11 +41,11 @@ const update = async (req, res, next) => {
 try {
 const id = Number(req.params.id);
 
-```
+
 const updated = await toursService.update(id, req.body);
 
 res.json(updated);
-```
+
 
 } catch (error) {
 next(error);
@@ -56,11 +56,11 @@ const remove = async (req, res, next) => {
 try {
 const id = Number(req.params.id);
 
-```
+
 await toursService.remove(id);
 
 res.json({ message: "Tour eliminado" });
-```
+
 
 } catch (error) {
 next(error);

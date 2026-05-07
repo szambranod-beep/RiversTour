@@ -1,20 +1,31 @@
-const API_KEY = "riverstour-123";
+const sessionsService = require("../services/sessions.service");
 
-module.exports = (req, res, next) => {
-const apiKey = req.headers["x-api-key"];
+module.exports = async (req, res, next) => {
 
-if (!apiKey) {
-return res.status(401).json({
-message: "API Key requerida"
-});
-}
+  try {
 
-if (apiKey !== API_KEY) {
-return res.status(403).json({
-message: "API Key inválida"
-});
-}
+    const token = req.headers["x-session-token"];
 
-next();
+    if (!token) {
+      return res.status(401).json({
+        message: "Token requerido"
+      });
+    }
+
+    const session = await sessionsService.getByToken(token);
+
+    if (!session) {
+      return res.status(401).json({
+        message: "Sesión inválida"
+      });
+    }
+
+    req.user = session;
+
+    next();
+
+  } catch (error) {
+    next(error);
+  }
+
 };
-

@@ -1,36 +1,41 @@
 const authService = require("../services/auth.service");
-const sessionService = require("../services/session.service");
+const sessionsService = require("../services/sessions.service");
 
 const login = async (req, res, next) => {
-try {
-const { email, password } = req.body;
 
-const result = await authService.login(email, password);
+  try {
 
-res.json(result);
+    const { email, password } = req.body;
 
+    const result = await authService.login(email, password);
 
-} catch (error) {
-next(error);
-}
+    res.json(result);
+
+  } catch (error) {
+    next(error);
+  }
+
 };
 
 const logout = async (req, res, next) => {
-try {
-const token = req.headers["x-session-token"];
 
+  try {
 
-await sessionService.logout(token);
+    const token = req.headers["x-session-token"];
 
-res.json({ message: "Logout exitoso" });
+    await sessionsService.logout(token);
 
+    res.json({
+      message: "Logout exitoso"
+    });
 
-} catch (error) {
-next(error);
-}
+  } catch (error) {
+    next(error);
+  }
+
 };
 
 module.exports = {
-login,
-logout
+  login,
+  logout
 };

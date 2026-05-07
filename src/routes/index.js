@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const { requireApiKey } = require("../middlewares/apiKey.middleware");
+// Middlewares
+const requireApiKey = require("../middlewares/apiKey.middleware");
 const authMiddleware = require("../middlewares/auth.middleware");
 const roleMiddleware = require("../middlewares/role.middleware");
 
@@ -10,34 +11,92 @@ const auth = require("../controllers/auth.controller");
 const tours = require("../controllers/tours.controller");
 const orders = require("../controllers/orders.controller");
 
-// Health check
+// Health
 router.get("/health", (req, res) => {
-res.json({ ok: true });
+  res.json({
+    ok: true,
+    message: "API funcionando"
+  });
 });
 
-// 🔓 AUTENTICACIÓN (público)
+
+// =========================
+// AUTH
+// =========================
+
+// Login público
 router.post("/auth/login", auth.login);
 
-// 🔐 LOGOUT (protegido)
-router.post("/auth/logout", requireApiKey, authMiddleware, auth.logout);
+// Logout protegido
+router.post(
+  "/auth/logout",
+  requireApiKey,
+  authMiddleware,
+  auth.logout
+);
 
-// 🌍 TOURS
 
-// Público
-router.get("/tours", requireApiKey, tours.getAll);
-router.get("/tours/:id", requireApiKey, tours.getById);
+// =========================
+// TOURS
+// =========================
 
-// Solo ADMIN
-router.post("/tours", requireApiKey, authMiddleware, roleMiddleware("admin"), tours.create);
-router.put("/tours/:id", requireApiKey, authMiddleware, roleMiddleware("admin"), tours.update);
-router.delete("/tours/:id", requireApiKey, authMiddleware, roleMiddleware("admin"), tours.remove);
+// Públicos
+router.get(
+  "/tours",
+  requireApiKey,
+  tours.getAll
+);
 
-// 🧾 ÓRDENES (reservas)
+router.get(
+  "/tours/:id",
+  requireApiKey,
+  tours.getById
+);
 
-// Usuario crea reserva
-router.post("/orders", requireApiKey, authMiddleware, orders.create);
+// Solo admin
+router.post(
+  "/tours",
+  requireApiKey,
+  authMiddleware,
+  roleMiddleware("admin"),
+  tours.create
+);
+
+router.put(
+  "/tours/:id",
+  requireApiKey,
+  authMiddleware,
+  roleMiddleware("admin"),
+  tours.update
+);
+
+router.delete(
+  "/tours/:id",
+  requireApiKey,
+  authMiddleware,
+  roleMiddleware("admin"),
+  tours.remove
+);
+
+
+// =========================
+// ORDERS / RESERVAS
+// =========================
+
+// Crear reserva
+router.post(
+  "/orders",
+  requireApiKey,
+  authMiddleware,
+  orders.create
+);
 
 // Ver mis reservas
-router.get("/orders/my-orders", requireApiKey, authMiddleware, orders.getMyOrders);
+router.get(
+  "/orders/my-orders",
+  requireApiKey,
+  authMiddleware,
+  orders.getMyOrders
+);
 
 module.exports = router;

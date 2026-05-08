@@ -1,27 +1,35 @@
-const { readFile, writeFile } = require("../utils/fileDb");
+const path = require("path");
+const crypto = require("crypto");
+const { readJson, writeJson } = require("../utils/fileDb");
 
-const FILE_NAME = "orders.json";
+class OrderRepository {
+  constructor() {
+    this.filePath = path.join(__dirname, "../../data/orders.json");
+  }
 
-const getAll = async () => {
-return await readFile(FILE_NAME);
-};
+  async list() {
+    return await readJson(this.filePath);
+  }
 
-const getByUserId = async (userId) => {
-const orders = await getAll();
-return orders.filter((order) => order.userId === userId);
-};
+  async create(order) {
+    const orders = await this.list();
 
-const save = async (newOrder) => {
-const orders = await getAll();
-orders.push(newOrder);
+    const newOrder = {
+      id: crypto.randomUUID(),
+      ...order,
+      createdAt: new Date().toISOString()
+    };
 
-await writeFile(FILE_NAME, orders);
-return newOrder;
-};
+    orders.push(newOrder);
+    await writeJson(this.filePath, orders);
 
-module.exports = {
-getAll,
-getByUserId,
-save
-};
+    return newOrder;
+  }
 
+  async findByUserId(userId) {
+    const orders = await this.list();
+    return orders.filter(order => order.userId === userId);
+  }
+}
+
+module.exports = { OrderRepository };

@@ -1,21 +1,16 @@
-module.exports = (role) => {
 
+const { HttpError } = require("../utils/httpError");
+
+function requireRole(...allowedRoles) {
   return (req, res, next) => {
+    const userRole = req.user?.role;
 
-    if (!req.user) {
-      return res.status(401).json({
-        message: "No autenticado"
-      });
-    }
-
-    if (req.user.role !== role) {
-      return res.status(403).json({
-        message: "No autorizado"
-      });
+    if (!allowedRoles.includes(userRole)) {
+      return next(new HttpError(403, "FORBIDDEN", "No tienes permisos para esta operación"));
     }
 
     next();
-
   };
+}
 
-};
+module.exports = { requireRole };

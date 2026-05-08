@@ -1,43 +1,23 @@
-const ordersService = require("../services/orders.service");
+const { ok } = require("../utils/response");
+const { OrderService } = require("../services/orders.service");
 
-const create = async (req, res, next) => {
-try {
-const token = req.headers["x-session-token"];
-const user = req.user;
+const service = new OrderService();
 
-
-const { tours } = req.body;
-
-const order = await ordersService.createOrder(
-  user.userId,
-  tours
-);
-
-res.status(201).json(order);
-
-
-} catch (error) {
-next(error);
+async function pay(req, res, next) {
+  try {
+    return ok(res, 200, await service.pay(req.user.id));
+  } catch (error) {
+    next(error);
+  }
 }
-};
 
-const getMyOrders = async (req, res, next) => {
-try {
-const user = req.user;
-
-
-const orders = await ordersService.getMyOrders(user.userId);
-
-res.json(orders);
-
-
-} catch (error) {
-next(error);
+async function myOrders(req, res, next) {
+  try {
+    return ok(res, 200, await service.listByUser(req.user.id));
+  } catch (error) {
+    next(error);
+  }
 }
-};
 
-module.exports = {
-create,
-getMyOrders
-};
+module.exports = { pay, myOrders };
 

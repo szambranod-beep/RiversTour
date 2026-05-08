@@ -1,38 +1,49 @@
-const { readFile, writeFile } = require("../utils/fileDb");
+const path = require("path");
+const crypto = require("crypto");
+const { readJson, writeJson } = require("../utils/fileDb");
 
-const FILE_NAME = "sessions.json";
+class SessionRepository {
+  constructor() {
+    this.filePath = path.join(__dirname, "../../data/sessions.json");
+  }
 
-const getAll = async () => {
-return await readFile(FILE_NAME);
-};
+  async list() {
+    return await readJson(this.filePath);
+  }
 
-const getByToken = async (token) => {
-const sessions = await getAll();
-return sessions.find((session) => session.token === token);
-};
+  async findByApiKey(apiKey) {
+    const sessions = await this.list();
+    return sessions.find(session => session.apiKey === apiKey && session.active === true) || null;
+  }
 
-const create = async (session) => {
-const sessions = await getAll();
-sessions.push(session);
+  async create(userId) {
+    const sessions = await this.list();
 
-await writeFile(FILE_NAME, sessions);
-return session;
-};
+    const session = {
+      id: crypto.randomUUID(),
+      userId,
+      apiKey: crypto.randomBytes(16).toString("hex"),
+      active: true,
+      createdAt: new Date().toISOString()
+    };
 
-const deleteByToken = async (token) => {
-const sessions = await getAll();
+    sessions.push(session);
+    await writeJson(this.filePath, sessions);
 
-const filtered = sessions.filter(
-(session) => session.token !== token
-);
+    return session;
+  }
 
-await writeFile(FILE_NAME, filtered);
-return true;
-};
+  async deactivate(apiKey) {
+    const sessions = await this.list();
+    const index = sessions.findIndex(session => session.apiKey === apiKey);
 
-module.exports = {
-getAll,
-getByToken,
-create,
-deleteByToken
-};
+    if (index === -1) return null;
+
+    sessions[index].active = false;
+    await writeJson(this.filePath, sessions);
+
+    return sessions[index];
+  }
+}
+
+module.exports = { SessionRepository };

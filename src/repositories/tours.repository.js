@@ -1,50 +1,63 @@
-const { readFile, writeFile } = require("../utils/fileDb");
+const path = require("path");
+const crypto = require("crypto");
+const { readJson, writeJson } = require("../utils/fileDb");
 
-const FILE_NAME = "tours.json";
+class ProductRepository {
+  constructor() {
+    this.filePath = path.join(__dirname, "../../data/tours.json");
+  }
 
-const getAll = async () => {
-return await readFile(FILE_NAME);
-};
+  async list() {
+    return await readJson(this.filePath);
+  }
 
-const getById = async (id) => {
-const tours = await getAll();
-return tours.find((tour) => tour.id === id);
-};
+  async findById(id) {
+    const products = await this.list();
+    return products.find(product => product.id === id) || null;
+  }
 
-const save = async (newTour) => {
-const tours = await getAll();
-tours.push(newTour);
+  async create(product) {
+    const products = await this.list();
 
-await writeFile(FILE_NAME, tours);
-return newTour;
-};
+    const newProduct = {
+      id: crypto.randomUUID(),
+      ...product,
+      active: true
+    };
 
-const update = async (id, data) => {
-const tours = await getAll();
+    products.push(newProduct);
+    await writeJson(this.filePath, products);
 
-const index = tours.findIndex((tour) => tour.id === id);
-if (index === -1) return null;
+    return newProduct;
+  }
 
-tours[index] = { ...tours[index], ...data };
+  async update(id, patch) {
+    const products = await this.list();
+    const index = products.findIndex(product => product.id === id);
 
-await writeFile(FILE_NAME, tours);
-return tours[index];
-};
+    if (index === -1) return null;
 
-const remove = async (id) => {
-const tours = await getAll();
+    products[index] = {
+      ...products[index],
+      ...patch
+    };
 
-const filtered = tours.filter((tour) => tour.id !== id);
+    await writeJson(this.filePath, products);
 
-await writeFile(FILE_NAME, filtered);
-return true;
-};
+    return products[index];
+  }
 
-module.exports = {
-getAll,
-getById,
-save,
-update,
-remove
-};
+  async remove(id) {
+    const products = await this.list();
+    const index = products.findIndex(product => product.id === id);
 
+    if (index === -1) return null;
+
+    products[index].active = false;
+    await writeJson(this.filePath, products);
+
+    return products[index];
+  }
+}
+
+module.exports = { ProductRepository };

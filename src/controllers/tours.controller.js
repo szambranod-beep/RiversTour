@@ -1,77 +1,45 @@
-const toursService = require("../services/tours.service");
+const { ok } = require("../utils/response");
+const { ProductService } = require("../services/tours.service");
 
-const getAll = async (req, res, next) => {
-try {
-const tours = await toursService.getAll();
-res.json(tours);
-} catch (error) {
-next(error);
+const service = new ProductService();
+
+async function list(req, res, next) {
+  try {
+    return ok(res, 200, await service.list());
+  } catch (error) {
+    next(error);
+  }
 }
-};
 
-const getById = async (req, res, next) => {
-try {
-const id = Number(req.params.id);
-
-
-const tour = await toursService.getById(id);
-
-res.json(tour);
-
-
-} catch (error) {
-next(error);
+async function getById(req, res, next) {
+  try {
+    return ok(res, 200, await service.getById(req.params.id));
+  } catch (error) {
+    next(error);
+  }
 }
-};
 
-const create = async (req, res, next) => {
-try {
-const newTour = await toursService.create(req.body);
-
-
-res.status(201).json(newTour);
-
-
-} catch (error) {
-next(error);
+async function create(req, res, next) {
+  try {
+    return ok(res, 201, await service.create(req.body));
+  } catch (error) {
+    next(error);
+  }
 }
-};
 
-const update = async (req, res, next) => {
-try {
-const id = Number(req.params.id);
-
-
-const updated = await toursService.update(id, req.body);
-
-res.json(updated);
-
-
-} catch (error) {
-next(error);
+async function update(req, res, next) {
+  try {
+    return ok(res, 200, await service.update(req.params.id, req.body));
+  } catch (error) {
+    next(error);
+  }
 }
-};
 
-const remove = async (req, res, next) => {
-try {
-const id = Number(req.params.id);
-
-
-await toursService.remove(id);
-
-res.json({ message: "Tour eliminado" });
-
-
-} catch (error) {
-next(error);
+async function remove(req, res, next) {
+  try {
+    await service.remove(req.params.id);
+    return res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
 }
-};
-
-module.exports = {
-getAll,
-getById,
-create,
-update,
-remove
-};
-

@@ -1,16 +1,18 @@
 [
   {
-    "id": 1,
-    "name": "Admin Riverstour",
-    "email": "admin@riverstour.com",
-    "password": "123456",
-    "role": "admin"
+    "id": "1",
+    "name": "Administrador",
+    "email": "admin@mail.com",
+    "password": "12345",
+    "role": "admin",
+    "active": true
   },
   {
-    "id": 2,
-    "name": "Juan Perez",
-    "email": "juan@gmail.com",
-    "password": "123456",
-    "role": "user"
+    "id": "2",
+    "name": "Carloss",
+    "email": "carlos@mail.com",
+    "password": "12345",
+    "role": "client",
+    "active": true
   }
 ]

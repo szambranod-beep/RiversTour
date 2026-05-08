@@ -20,4 +20,3 @@ async function myOrders(req, res, next) {
 }
 
 module.exports = { pay, myOrders };
-

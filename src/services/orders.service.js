@@ -1,11 +1,12 @@
 const { HttpError } = require("../utils/httpError");
-const { OrderRepository } = require("../repositories/orders.repository");
-const { ProductRepository } = require("../repositories/tours.repository");
+const { OrderRepository } = require("../repositories/order.repository");
+const { CartRepository } = require("../repositories/cart.repository");
+const { ProductRepository } = require("../repositories/product.repository");
 
 class OrderService {
   constructor() {
     this.orderRepo = new OrderRepository();
-    //this.cartRepo = new CartRepository();
+    this.cartRepo = new CartRepository();
     this.productRepo = new ProductRepository();
   }
 

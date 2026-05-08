@@ -4,7 +4,7 @@ const { readJson, writeJson } = require("../utils/fileDb");
 
 class ProductRepository {
   constructor() {
-    this.filePath = path.join(__dirname, "../../data/tours.json");
+    this.filePath = path.join(__dirname, "../../data/products.json");
   }
 
   async list() {

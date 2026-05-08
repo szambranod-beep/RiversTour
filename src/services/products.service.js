@@ -1,5 +1,5 @@
 const { HttpError } = require("../utils/httpError");
-const { ProductRepository } = require("../repositories/tours.repository");
+const { ProductRepository } = require("../repositories/product.repository");
 
 class ProductService {
   constructor() {

@@ -1,5 +1,5 @@
 const { ok } = require("../utils/response");
-const { ProductService } = require("../services/tours.service");
+const { ProductService } = require("../services/products.service");
 
 const service = new ProductService();
 
@@ -43,3 +43,5 @@ async function remove(req, res, next) {
     next(error);
   }
 }
+
+module.exports = { list, getById, create, update, remove };

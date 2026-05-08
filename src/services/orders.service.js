@@ -1,54 +1,54 @@
 const { HttpError } = require("../utils/httpError");
 const { OrderRepository } = require("../repositories/order.repository");
-const { CartRepository } = require("../repositories/cart.repository");
-const { ProductRepository } = require("../repositories/product.repository");
+const { BookingRepository } = require("../repositories/booking.repository");
+const { TourRepository } = require("../repositories/tour.repository");
 
 class OrderService {
   constructor() {
     this.orderRepo = new OrderRepository();
-    this.cartRepo = new CartRepository();
-    this.productRepo = new ProductRepository();
+    this.bookingRepo = new BookingRepository();
+    this.tourRepo = new TourRepository();
   }
 
   async pay(userId) {
-    const cart = await this.cartRepo.findByUserId(userId);
+    const booking = await this.bookingRepo.findByUserId(userId);
 
-    if (!cart.items || cart.items.length === 0) {
-      throw new HttpError(409, "CONFLICT", "El carrito está vacío");
+    if (!booking.items || booking.items.length === 0) {
+      throw new HttpError(409, "CONFLICT", "La reserva está vacía");
     }
 
     let total = 0;
 
-    for (const item of cart.items) {
-      const product = await this.productRepo.findById(item.productId);
+    for (const item of booking.items) {
+      const tour = await this.tourRepo.findById(item.tourId);
 
-      if (!product || product.active !== true) {
-        throw new HttpError(404, "NOT_FOUND", `Producto no existe: ${item.productId}`);
+      if (!tour || tour.active !== true) {
+        throw new HttpError(404, "NOT_FOUND", `Tour no existe: ${item.tourId}`);
       }
 
-      if (product.stock < item.quantity) {
-        throw new HttpError(409, "CONFLICT", `Stock insuficiente para ${product.name}`);
+      if (tour.availableSpots < item.quantity) {
+        throw new HttpError(409, "CONFLICT", `Cupos insuficientes para: ${tour.name}`);
       }
 
       total += item.price * item.quantity;
 
-      await this.productRepo.update(product.id, {
-        stock: product.stock - item.quantity
+      await this.tourRepo.update(tour.id, {
+        availableSpots: tour.availableSpots - item.quantity
       });
     }
 
     const order = await this.orderRepo.create({
       userId,
-      items: cart.items,
+      items: booking.items,
       total,
       status: "paid"
     });
 
-    cart.items = [];
-    await this.cartRepo.save(cart);
+    booking.items = [];
+    await this.bookingRepo.save(booking);
 
     return {
-      message: "Pago realizado correctamente",
+      message: "Reserva pagada correctamente",
       order
     };
   }

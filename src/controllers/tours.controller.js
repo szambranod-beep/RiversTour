@@ -1,7 +1,7 @@
 const { ok } = require("../utils/response");
-const { ProductService } = require("../services/products.service");
+const { TourService } = require("../services/tours.service");
 
-const service = new ProductService();
+const service = new TourService();
 
 async function list(req, res, next) {
   try {

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "a1b2c3d4-0001-0001-0001-000000000001",
+    "name": "Rafting en el Río Negro",
+    "description": "Aventura de 3 horas en aguas bravas nivel 3-4, apta para mayores de 12 años.",
+    "price": 85000,
+    "duration": 3,
+    "maxCapacity": 12,
+    "availableSpots": 12,
+    "location": "Río Negro, Cundinamarca",
+    "category": "aventura",
+    "meetingPoint": "Parque principal de La Calera",
+    "includes": ["equipo de seguridad", "guía certificado", "seguro", "refrigerio"],
+    "active": true
+  }
+]

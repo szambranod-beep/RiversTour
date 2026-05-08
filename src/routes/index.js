@@ -15,7 +15,7 @@ router.get("/health", (req, res) => {
 // Auth público
 router.post("/auth/register", auth.register);
 router.post("/auth/login", auth.login);
-router.post("/terms", terms.getTerms);
+//router.post("/terms", terms.getTerms);
 
 // Auth protegido
 router.post("/auth/logout", requireApiKey, auth.logout);

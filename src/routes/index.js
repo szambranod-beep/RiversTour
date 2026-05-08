@@ -56,8 +56,6 @@ router.get(
 // Solo admin
 router.post(
   "/tours",
-  requireApiKey,
-  authMiddleware,
   roleMiddleware("admin"),
   tours.create
 );

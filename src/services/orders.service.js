@@ -5,7 +5,7 @@ const { ProductRepository } = require("../repositories/tours.repository");
 class OrderService {
   constructor() {
     this.orderRepo = new OrderRepository();
-    this.cartRepo = new CartRepository();
+    //this.cartRepo = new CartRepository();
     this.productRepo = new ProductRepository();
   }
 
